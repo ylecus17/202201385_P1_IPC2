@@ -17,10 +17,10 @@ def menu():
         
         if eleccion==1:
             registrarAuto()
-            imprimirAutos()
+            
         elif eleccion==2:
             registrarCliente()
-            imprimirClientes()
+            
         elif eleccion==3:
             print('opcion1')
             realizarCompra()
@@ -44,17 +44,7 @@ def registrarCliente():
     clientes = cliente(nombre,correo,nit)
     listClientes.append(clientes)
     print("Cliente registrado exitosamente.")
-def imprimirClientes():
-    if not listClientes:  # Verifica si la lista está vacía
-        print("No hay autos registrados.")
-    else:
-        print("Autos registrados:")
-        for cliente in listClientes:  # 'for' recorre toda la lista automáticamente
-            print(f"nombre: {cliente.nombre}")
-            print(f"correo: {cliente.correo}")
-            print(f"nit: {cliente.nit}")
-           
-            print("-" * 40)  # Separador entre autos
+
 def realizarCompra():
 
     clienteCompra=input('ingrese el nit del cliente que quiere comprar ')
@@ -96,7 +86,7 @@ def submenu(cliente):
             for auto in listAutos:
                 if autoEleccion == auto.placa:
                     total += auto.precioU
-                    autosCompra.append(auto)  # Agregar el objeto `auto` a la lista `autosCompra`
+                    autosCompra.append(auto)  
                     auto_encontrado = True
                     print(f"Auto {auto.placa} agregado a la compra.")
                     break
@@ -105,46 +95,52 @@ def submenu(cliente):
                 print('No se encontró un auto con esa placa.')
 
         elif eleccion == '2':
-            if autosCompra:  # Verificar que se hayan agregado autos antes de terminar la compra
-                # Preguntar si se desea agregar el seguro
+            if autosCompra: 
                 seguro = input("¿Desea agregar seguro a los autos comprados? (SI/NO): ").strip().upper()
                 
                 if seguro == "SI":
-                    total_con_seguro = total  # Inicializar el total con seguro con el total actual
+                    total_con_seguro = total  
                     for auto in autosCompra:
-                        total_con_seguro += auto.precioU * 0.15  # Añadir 15% del precio de cada auto
+                        total_con_seguro += auto.precioU * 0.15  
                     total = total_con_seguro
                     print(f"Se ha añadido el seguro al total. Nuevo total: Q{total:.2f}")
                 else:
                     print(f"Total sin seguro: Q{total:.2f}")
                 
-                # Crear la compra y generar la factura
+               
                 compra = Compra(cliente, autosCompra, total)
                 listCompra.append(compra)
 
-                print('------------------------')
-                print('Total de factura')
-                print(f'Q {total:.2f}')
-                 # Llamar a la función para generar y mostrar la factura
-                break  # Salir del bucle
+                facturar(cliente, autosCompra, total)
+                break 
             else:
                 print("No se han agregado autos a la compra.")
         else:
             print('Opción no válida, por favor intente de nuevo.')
+def facturar(clienteCompra, autosCompra, total):
+    print('--------------------------')
+    print('Datos del Cliente:')
+    
+    # Buscar y mostrar los datos del cliente
+    for cliente in listClientes:
+        if clienteCompra == cliente.nit:
+            print(f'Nombre del cliente: {cliente.nombre}')
+            print(f'Correo del cliente: {cliente.correo}')
+            print(f'NIT del cliente: {cliente.nit}')
+            break
+
+    print('--------------------------')
+    print('Autos comprados:')
+    
+    # Mostrar los detalles de cada auto comprado
+    for auto in autosCompra:
+        print(f"- Placa: {auto.placa}, Marca: {auto.marca}, Modelo: {auto.modelo}, Precio: Q{auto.precioU:.2f}")
+    
+    print('--------------------------')
+    print(f'Total a pagar: Q{total:.2f}')
+    print('--------------------------')
 
     
-def imprimirAutos():
-    if not listAutos:  # Verifica si la lista está vacía
-        print("No hay autos registrados.")
-    else:
-        print("Autos registrados:")
-        for auto in listAutos:  # 'for' recorre toda la lista automáticamente
-            print(f"Placa: {auto.placa}")
-            print(f"Marca: {auto.marca}")
-            print(f"Modelo: {auto.modelo}")
-            print(f"Descripción: {auto.descripcion}")
-            print(f"Precio Unitario: Q{auto.precioU:.2f}")
-            print("-" * 40)  # Separador entre autos
 def reporteCompras():
     total=0
     for compra in listCompra:
